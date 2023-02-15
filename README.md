@@ -43,20 +43,20 @@ Ordered by precedence from low to high
 ## Logic symbols
 
 | ChineseBaozi | Java |
-| ------------ | ---- | --- | --- |
+| ------------ | ---- |
 | 且           | &&   |
-| 或           |      |     |     |
+| 或           |      |
 | 非           | !    |
 
 ## Keywords
 
 | ChineseBaozi | Java      |
-| ------------ | --------- | --- | --- |
+| ------------ | --------- |
 | 打印         | print     |
 | 当           | while     |
 | 每一个       | for       |
 | 非           | !         |
-| 或           |           |     |     |
+| 或           |           |
 | 且           | &&        |
 | 如果         | if        |
 | 呼           | not exist |
