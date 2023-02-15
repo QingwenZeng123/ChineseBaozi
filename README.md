@@ -4,17 +4,74 @@
 
 ## Introduction
 
-Is there a way that person don't know english can write programming language? I want my parents to feel the magic of programming language, so I made ChineseBaozi!
+Is there a way that person don't know english can write programming language? I want my parents to feel the magic of programming language, so I made ChineseBaozi! This is a programming language in chinese.
 
 ChineseBaozi is an object-oriented language in chinese and designed based on the features of C++. It includes
 
 ## Features
 
-## Examples
+## Data Types
 
-This is a programming language in chinese.
+| ChineseBaozi | Java    |
+| ------------ | ------- |
+| 词           | String  |
+| 字           | char    |
+| 整数         | int     |
+| 小数         | float   |
+| 真假         | boolean |
+| 数组         | array   |
 
-| ChineseBaozi | JavaScript |
-| ------------ | ---------- |
+## Arithmetics
 
-|
+Ordered by precedence from low to high
+
+| ChineseBaozi     | Java             |
+| ---------------- | ---------------- |
+| 9 + / - 6        | 9 + / - 6        |
+| 9 \* / % / ÷ / 6 | 9 \* / % / / / 6 |
+| 9 \*\* 6         | 9 \*\* 6         |
+
+## Compare
+
+| chineseBaozi | Java |
+| ------------ | ---- |
+| ≤            | <=   |
+| ≥            | >=   |
+| ==           | ==   |
+| ≠            | !=   |
+
+## Logic symbols
+
+| ChineseBaozi | Java |
+| ------------ | ---- | --- | --- |
+| 且           | &&   |
+| 或           |      |     |     |
+| 非           | !    |
+
+## Keywords
+
+| ChineseBaozi | Java      |
+| ------------ | --------- | --- | --- |
+| 打印         | print     |
+| 当           | while     |
+| 每一个       | for       |
+| 非           | !         |
+| 或           |           |     |     |
+| 且           | &&        |
+| 如果         | if        |
+| 呼           | not exist |
+| 返回         | return    |
+| 词           | String    |
+| 字           | char      |
+| 整数         | int       |
+| 小数         | float     |
+| 真假         | boolean   |
+| 数组         | array     |
+| 真           | true      |
+| 假           | false     |
+
+## Built in methods
+
+## Control Flow
+
+## Comments
