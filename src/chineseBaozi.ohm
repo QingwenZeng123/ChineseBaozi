@@ -6,7 +6,7 @@ ChineseBaozi {
                                      | while  Exp Condition                                                                    -- while
                                      | for  Exp Condition                                                                      -- for
                                      | if Exp Condition                                                                        -- if
-                                     | rest "🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔"                                                      -- rest
+                                     | breathing "🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔"                                                 -- breathing
                                      | return Exp                                                                              --return
       Declaration            = Type id "=" Exp                                                                                 --dec
                                      | Type "[]" id "=" "["(num | charlit | stringlit| bool)*(","(num | charlit | stringlit | bool))* "]"                                           --array
@@ -45,7 +45,7 @@ ChineseBaozi {
      not                      = "非" ~cjk
      or                       = "或" ~cjk
      and                      = "且" ~cjk
-     rest                     = "呼" ~cjk
+     breathing                = "呼" ~cjk
      return                   = "返回"~cjk
      
      
@@ -56,7 +56,7 @@ ChineseBaozi {
      boolean                  = "真假"~cjk
      array                    = "数组"~cjk
      
-     keyword                  = print | while | for | if | true | false | not | or | and | rest | string | char | int | float | return | array | boolean
+     keyword                  = print | while | for | if | true | false | not | or | and | breathing | string | char | int | float | return | array | boolean
      id                       = ~keyword cjk+
      cjk                      = "\u{4E00}".."\u{9FFF}"
      num                      = digit+ ("." digit+)?
