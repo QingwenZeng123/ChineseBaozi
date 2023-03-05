@@ -46,7 +46,7 @@ ChineseBaozi {
      or                       = "或" ~cjk
      and                      = "且" ~cjk
      breathing                = "呼" ~cjk
-     return                   = "返回"~cjk
+     return                   = "返回" ~cjk
      
      
      string                   = "词" ~cjk

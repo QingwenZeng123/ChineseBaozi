@@ -12,8 +12,9 @@ function error(message, node) {
 const chineseBaoziGrammar = ohm.grammar(
   fs.readFileSync("src/chineseBaozi.ohm")
 );
+
 export default function analyze(sourceCode) {
   const match = chineseBaoziGrammar.match(sourceCode);
   if (!match.succeeded()) error(match.message);
-  console.log("you are good");
+  //console.log("you are good");
 }
