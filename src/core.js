@@ -1,26 +1,63 @@
-import util from "util";
+import util from "util"
 
-class Program {
+export class Program {
   constructor(statements) {
-    this.statements = statements;
+    this.statements = statements
   }
 }
 
-class Print {
+// how to write variable declaration and breathing
+export class VariableDeclaration {
+  constructor(type, variable, initializer) {
+    Object.assign(this, { type, variable, initializer })
+  }
+}
+
+export class AssignmentStatement {
+  constructor(target, source) {
+    Object.assign(this, { target, source })
+  }
+}
+
+export class PrintStatement {
   constructor(argument) {
-    this.argument = argument;
+    this.argument = argument
   }
 }
 
-class Declaration {
-  constructor() {
-    Object.assign(this, {});
+export class WhileStatement {
+  constructor(test, body) {
+    Object.assign(this, { test, body })
   }
 }
 
-class Assignment {
-  constructor() {
-    Object.assign(this, {});
+export class ForStatement {
+  constructor(test, iteration) {
+    Object.assign(this, { test, iteration })
+  }
+}
+
+export class IfStatement {
+  construct(test, consequent, alternate) {
+    Object.assign(this, { test, consequent, alternate })
+  }
+}
+
+export class ReturnStatement {
+  construct(argument) {
+    this.argument = argument
+  }
+}
+
+export class BinaryExpression {
+  constructor(op, left, right) {
+    Object.assign(this, { op, left, right })
+  }
+}
+
+export class unaryExpression {
+  constructor(op, operand) {
+    Object.assign(this, { op, operand })
   }
 }
 
@@ -29,30 +66,30 @@ class Assignment {
 // inspect function, while nice, isn't nice enough. Defined properly in
 // the root class prototype so that it automatically runs on console.log.
 Program.prototype[util.inspect.custom] = function () {
-  const tags = new Map();
+  const tags = new Map()
 
   // Attach a unique integer tag to every node
   function tag(node) {
-    if (tags.has(node) || typeof node !== "object" || node === null) return;
-    tags.set(node, tags.size + 1);
+    if (tags.has(node) || typeof node !== "object" || node === null) return
+    tags.set(node, tags.size + 1)
     for (const child of Object.values(node)) {
-      Array.isArray(child) ? child.forEach(tag) : tag(child);
+      Array.isArray(child) ? child.forEach(tag) : tag(child)
     }
   }
 
   function* lines() {
     function view(e) {
-      if (tags.has(e)) return `#${tags.get(e)}`;
-      if (Array.isArray(e)) return `[${e.map(view)}]`;
-      return util.inspect(e);
+      if (tags.has(e)) return `#${tags.get(e)}`
+      if (Array.isArray(e)) return `[${e.map(view)}]`
+      return util.inspect(e)
     }
     for (let [node, id] of [...tags.entries()].sort((a, b) => a[1] - b[1])) {
-      let type = node.constructor.name;
-      let props = Object.entries(node).map(([k, v]) => `${k}=${view(v)}`);
-      yield `${String(id).padStart(4, " ")} | ${type} ${props.join(" ")}`;
+      let type = node.constructor.name
+      let props = Object.entries(node).map(([k, v]) => `${k}=${view(v)}`)
+      yield `${String(id).padStart(4, " ")} | ${type} ${props.join(" ")}`
     }
   }
 
-  tag(this);
-  return [...lines()].join("\n");
-};
+  tag(this)
+  return [...lines()].join("\n")
+}

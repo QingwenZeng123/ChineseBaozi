@@ -1,10 +1,14 @@
-import assert from "assert/strict";
-import fs from "fs";
-import ohm from "ohm-js";
+import assert from "assert/strict"
+import fs from "fs"
+import ohm from "ohm-js"
 
 const syntaxChecks = [
   ["all numeric literal forms", "打印 🐷8 * 89.123🐷"],
   ["all string array", '词[] 猪 = ["pig", "pig", "pig"]'],
+  [
+    "all string array",
+    '词[][] 狗 = [["pig", "pig", "pig"], ["dog", "dog"], ["cheese"]]',
+  ],
   ["all boolean array", "真假[] 对错 = [真, 假]"],
   ["complex expressions", "打印 🐷83 * ((((((((13 ÷ 21)))))))) + 1 - 0🐷"],
   ["all stringlit forms", '打印 🐷"dog"🐷'],
@@ -20,7 +24,7 @@ const syntaxChecks = [
   ["the if statement", "如果 (第一 == 3){返回 6}"],
   ["the breathing statement", "呼 🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔"],
   ["end of program inside comment", "词 例子 = 2  🐕this is comment"],
-];
+]
 
 const syntaxErrors = [
   // ["non-letter in an identifier", "ab😭c = 2", /Line 1, col 3/],
@@ -33,20 +37,20 @@ const syntaxErrors = [
   // ["an illegal statement on line 2", "print(5);\nx * 5;", /Line 2, col 3/],
   // ["a statement starting with a )", "print(5);\n) * 5", /Line 2, col 1/],
   // ["an expression starting with a *", "x = * 71;", /Line 1, col 5/],
-];
+]
 
 describe("The grammar", () => {
-  const grammar = ohm.grammar(fs.readFileSync("src/chineseBaozi.ohm"));
+  const grammar = ohm.grammar(fs.readFileSync("src/chineseBaozi.ohm"))
   for (const [scenario, source] of syntaxChecks) {
     it(`properly specifies ${scenario}`, () => {
-      assert(grammar.match(source).succeeded());
-    });
+      assert(grammar.match(source).succeeded())
+    })
   }
   for (const [scenario, source, errorMessagePattern] of syntaxErrors) {
     it(`does not permit ${scenario}`, () => {
-      const match = grammar.match(source);
-      assert(!match.succeeded());
-      assert(new RegExp(errorMessagePattern).test(match.message));
-    });
+      const match = grammar.match(source)
+      assert(!match.succeeded())
+      assert(new RegExp(errorMessagePattern).test(match.message))
+    })
   }
-});
+})

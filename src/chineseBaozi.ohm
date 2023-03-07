@@ -1,40 +1,53 @@
 ChineseBaozi {
        Program               = Statement+
-       Statement             = Declaration
-                                     | id  "="  Exp                                                                            -- assign
-                                     | print  "🐷" Exp  "🐷"                                                                  -- print
-                                     | while  Exp Condition                                                                    -- while
-                                     | for  Exp Condition                                                                      -- for
-                                     | if Exp Condition                                                                        -- if
-                                     | breathing "🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔"                                                 -- breathing
-                                     | return Exp                                                                              --return
-      Declaration            = Type id "=" Exp                                                                                 --dec
-                                     | Type "[]" id "=" "["(num | charlit | stringlit| bool)*(","(num | charlit | stringlit | bool))* "]"                                           --array
-                                     | Type "[]" id "=" "new" Type "[" num "]"                                                                                                           --arraylength
-      Type                      = string | char | int | float | boolean                                                                                                               --dataType
+       Statement             = VarDec
+                             | AssignStmt
+                             | PrintStmt
+                             | WhileStmt
+                             | ForStmt
+                             | IfStmt
+                             | BreathingStmt
+                             | ReturnStmt
+                                                                                      
+      VarDec                  = Type id "=" Exp                                                                                                                                                                                        
+      AssignStmt              = id  "="  Exp                                                                            
+      PrintStmt               = print  "🐷" Exp  "🐷"                                                                  
+      WhileStmt               = while  Exp Condition                                                                   
+      ForStmt                 = for  Exp Condition                                                                      
+      IfStmt                  = if Exp Condition                                                                        
+      BreathingStmt           = breathing "🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔"                                                
+      ReturnStmt              = return Exp                                                                                                                               
       Condition               = "{" Statement* "}"
       
       
-      Exp                     = not Exp7                                                                                    -- not
+      Exp                     = not Exp7                                                                                    -- unary
                                      | Exp1
-      Exp1                    = Exp1 or Exp2                                                                                 -- two
+      Exp1                    = Exp1 or Exp2                                                                                 -- binary
                                      | Exp2
-      Exp2                    = Exp2 and Exp3                                                                                -- two
+      Exp2                    = Exp2 and Exp3                                                                                -- binary
                                      | Exp3
-      Exp3                    = Exp4 ("≤"|"<"|"=="|"≠"|"≥"|">") Exp4                                                        -- two
+      Exp3                    = Exp4 ("≤"|"<"|"=="|"≠"|"≥"|">") Exp4                                                        -- binary
                                      | Exp4
-      Exp4                    = Exp4 ("+" | "-") Exp5                                                                        -- two
+      Exp4                    = Exp4 ("+" | "-") Exp5                                                                        -- binary
                                      | Exp5
-      Exp5                    = Exp5 ("*" | "÷" | "%") Exp6                                                                  -- two
+      Exp5                    = Exp5 ("*" | "÷" | "%") Exp6                                                                  -- binary
                                      | Exp6
-      Exp6                    = Exp7 "**" Exp6                                                                               -- two
+      Exp6                    = Exp7 "**" Exp6                                                                               -- binary
                                      | Exp7
       Exp7                    = bool
                                      | id
                                      | num
-                                     | "(" Exp ")"                                                                            --parenth
                                      | stringlit
                                      | charlit
+                                     | "(" Exp ")"                                                                            --parens
+                                     | "[" ListOf<Exp, ","> "]"                                                         --arrayOfArray
+     Type                     = Type "[]"                                                                                --arrayVariable                                                                      
+                                  | string
+                                  | char
+                                  | int
+                                  | float
+                                  | boolean
+
                                      
      print                    = "打印"  ~cjk
      while                    = "当"  ~cjk
