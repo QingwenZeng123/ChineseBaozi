@@ -13,68 +13,68 @@ function error(message, node) {
 const chineseBaoziGrammar = ohm.grammar(fs.readFileSync("src/chineseBaozi.ohm"))
 
 export default function analyze(sourceCode) {
-  const analyzer = chineseBaoziGrammar.createSemantics().addOperation("rep", {
+  const analyzer = chineseBaoziGrammar.createSemantics().addOperation("eval", {
     Program(statement) {
-      return new core.Program(statement.rep())
+      return new core.Program(statement.eval())
     },
     VarDec(type, variable, _equal, initializer) {
       return new core.VariableDeclaration(
-        type.rep(),
-        variable.rep(),
-        initializer.rep()
+        type.eval(),
+        variable.eval(),
+        initializer.eval()
       )
     },
     AssignStmt(target, _equal, source) {
-      return new core.AssignmentStatement(target.rep(), source.rep())
+      return new core.AssignmentStatement(target.eval(), source.eval())
     },
     PrintStmt(_print, _leftPig, argument, _rightPig) {
-      return new core.PrintStatement(argument.rep())
+      return new core.PrintStatement(argument.eval())
     },
     WhileStmt(_while, test, body) {
-      return new core.WhileStmt(test.rep(), body.rep())
+      return new core.WhileStmt(test.eval(), body.eval())
     },
     ForStmt(_for, test, iteration) {
-      return new core.ForStmt(test.rep(), iteration.rep())
+      return new core.ForStmt(test.eval(), iteration.eval())
     },
     IfStmt(_if, test, consequent, alternate) {
-      return new core.IfStmt(test.rep(), consequent.rep(), alternate.rep())
+      return new core.IfStmt(test.eval(), consequent.eval(), alternate.eval())
     },
     BreathingStmt(_breathing, _hedgehogs) {
       return null
     },
     ReturnStmt(_return, argument) {
-      return new core.ReturnStmt(argument.rep())
+      return new core.ReturnStmt(argument.eval())
     },
-    Condition(_leftCurly, body, _rightCurly) {
-      return body.rep()
+    Condition(_leftCurly, statements, _rightCurly) {
+      return statements.eval()
     },
     Exp_unary(op, operand) {
-      return new core.unaryExpression(op.rep(), operand.rep())
+      return new core.unaryExpression(op.eval(), operand.eval())
     },
     Exp1_binary(left, op, right) {
-      return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
+      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
     },
     Exp2_binary(left, op, right) {
-      return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
+      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
     },
     Exp3_binary(left, op, right) {
-      return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
+      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
     },
     Exp4_binary(left, op, right) {
-      return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
+      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
     },
     Exp5_binary(left, op, right) {
-      return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
+      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
     },
     Exp6_binary(left, op, right) {
-      return new core.BinaryExpression(op.rep(), left.rep(), right.rep())
+      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
     },
     Exp7_parens(_leftParens, expression, _rightParens) {
-      return expression.rep();
-    }
-    Exp7_arrayOfArray(_leftBracket, bodyArray, _rightBracket) {
-      return bodyArray.rep();
-    }
+      return expression.eval()
+    },
+    Exp7_arrayOfExp(_leftBracket, expressions, _rightBracket) {
+      return expressions.eval()
+    },
   })
 
   const match = chineseBaoziGrammar.match(sourceCode)

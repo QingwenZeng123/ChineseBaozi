@@ -6,7 +6,6 @@ export class Program {
   }
 }
 
-// how to write variable declaration and breathing
 export class VariableDeclaration {
   constructor(type, variable, initializer) {
     Object.assign(this, { type, variable, initializer })

@@ -16,9 +16,9 @@ ChineseBaozi {
       ForStmt                 = for  Exp Condition                                                                      
       IfStmt                  = if Exp Condition                                                                        
       BreathingStmt           = breathing "🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔"                                                
-      ReturnStmt              = return Exp                                                                                                                               
+      ReturnStmt              = return Exp  
+
       Condition               = "{" Statement* "}"
-      
       
       Exp                     = not Exp7                                                                                    -- unary
                                      | Exp1
@@ -40,7 +40,7 @@ ChineseBaozi {
                                      | stringlit
                                      | charlit
                                      | "(" Exp ")"                                                                            --parens
-                                     | "[" ListOf<Exp, ","> "]"                                                         --arrayOfArray
+                                     | "[" ListOf<Exp, ","> "]"                                                         --arrayOfExp
      Type                     = Type "[]"                                                                                --arrayVariable                                                                      
                                   | string
                                   | char
