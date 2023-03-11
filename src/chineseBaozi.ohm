@@ -34,14 +34,15 @@ ChineseBaozi {
                                      | Exp6
       Exp6                    = Exp7 "**" Exp6                                                                               -- binary
                                      | Exp7
-      Exp7                    = bool
+      Exp7                    = true
+                                     | false
                                      | id
                                      | num
                                      | stringlit
                                      | charlit
                                      | "(" Exp ")"                                                                            --parens
                                      | "[" ListOf<Exp, ","> "]"                                                         --arrayOfExp
-     Type                     = Type "[]"                                                                                --arrayVariable                                                                      
+     Type                     = Type "[]"                                                                                --array                                                                    
                                   | string
                                   | char
                                   | int
@@ -60,6 +61,8 @@ ChineseBaozi {
      and                      = "且" ~cjk
      breathing                = "呼" ~cjk
      return                   = "返回" ~cjk
+     true                     = "真" ~cjk
+     false                    = "假" ~cjk
      
      
      string                   = "词" ~cjk
@@ -67,14 +70,13 @@ ChineseBaozi {
      int                      = "整数" ~cjk
      float                    = "小数" ~cjk
      boolean                  = "真假"~cjk
-     array                    = "数组"~cjk
      
-     keyword                  = print | while | for | if | true | false | not | or | and | breathing | string | char | int | float | return | array | boolean
+     
+     keyword                  = print | while | for | if | true | false | not | or | and | breathing | string | char | int | float | return | boolean
      id                       = ~keyword cjk+
      cjk                      = "\u{4E00}".."\u{9FFF}"
      num                      = digit+ ("." digit+)?
      stringlit                = "\"" (~"\"" any)* "\"" 
      charlit                  = "'" (~"'" any) "'"
-     bool                     = "真" | "假" 
      space                    += "🐕" (~"\n" any)*                                                                           --comment
 }

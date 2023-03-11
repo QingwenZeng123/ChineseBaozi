@@ -40,13 +40,13 @@ export default function analyze(sourceCode) {
       return new core.IfStmt(test.eval(), consequent.eval(), alternate.eval())
     },
     BreathingStmt(_breathing, _hedgehogs) {
-      return null
+      return new core.BreathigStatement()
     },
     ReturnStmt(_return, argument) {
       return new core.ReturnStmt(argument.eval())
     },
     Condition(_leftCurly, statements, _rightCurly) {
-      return statements.eval()
+      return statements.asIteration().eval()
     },
     Exp_unary(op, operand) {
       return new core.unaryExpression(op.eval(), operand.eval())
@@ -73,7 +73,43 @@ export default function analyze(sourceCode) {
       return expression.eval()
     },
     Exp7_arrayOfExp(_leftBracket, expressions, _rightBracket) {
-      return expressions.eval()
+      return expressions.asIteration().eval()
+    },
+
+    Type_array(type, _leftBracket, _rightBracket) {
+      return new core.ArrayType(type.eval())
+    },
+
+    id(contents) {
+      return contents.sourceString
+    },
+
+    num(_whole, _point, _fraction) {
+      return Number(this.sourceString)
+    },
+
+    stringlit(_open, contents, _close) {
+      return new core.StringLiteral(contents.sourceString)
+    },
+
+    charlit(_open, character, _close) {
+      return new core.CharacterLiteral(character.sourceString)
+    },
+
+    true(_) {
+      return true
+    },
+
+    false(_) {
+      return false
+    },
+
+    _terminal() {
+      return this.sourceString
+    },
+
+    _iter(...children) {
+      return children.map((child) => child.rep())
     },
   })
 

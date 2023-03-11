@@ -37,13 +37,17 @@ export class ForStatement {
 }
 
 export class IfStatement {
-  construct(test, consequent, alternate) {
+  constructor(test, consequent, alternate) {
     Object.assign(this, { test, consequent, alternate })
   }
 }
 
+export class BreathigStatement {
+  constructor() {}
+}
+
 export class ReturnStatement {
-  construct(argument) {
+  constructor(argument) {
     this.argument = argument
   }
 }
@@ -54,9 +58,27 @@ export class BinaryExpression {
   }
 }
 
-export class unaryExpression {
+export class UnaryExpression {
   constructor(op, operand) {
     Object.assign(this, { op, operand })
+  }
+}
+
+export class StringLiteral {
+  constructor(contents) {
+    this.contents = contents
+  }
+}
+
+export class Characteriteral {
+  constructor(character) {
+    this.character = character
+  }
+}
+
+export class ArrayType {
+  constructor(memberType) {
+    this.memberType = memberType
   }
 }
 
