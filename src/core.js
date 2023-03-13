@@ -70,7 +70,7 @@ export class StringLiteral {
   }
 }
 
-export class Characteriteral {
+export class CharacterLiteral {
   constructor(character) {
     this.character = character
   }

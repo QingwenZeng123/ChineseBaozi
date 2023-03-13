@@ -1,22 +1,22 @@
 ChineseBaozi {
        Program               = Statement+
-       Statement             = VarDec
-                             | AssignStmt
-                             | PrintStmt
-                             | WhileStmt
-                             | ForStmt
-                             | IfStmt
-                             | BreathingStmt
-                             | ReturnStmt
+       Statement             = VarDec 
+                             | AssignStmt 
+                             | PrintStmt 
+                             | WhileStmt 
+                             | ForStmt 
+                             | IfStmt 
+                             | BreathingStmt 
+                             | ReturnStmt 
                                                                                       
-      VarDec                  = Type id "=" Exp                                                                                                                                                                                        
-      AssignStmt              = id  "="  Exp                                                                            
-      PrintStmt               = print  "🐷" Exp  "🐷"                                                                  
+      VarDec                  = Type id "=" Exp ";"                                                                                                                                                                                       
+      AssignStmt              = id  "="  Exp ";"                                                                           
+      PrintStmt               = print  "🐷" Exp  "🐷"  ";"                                                               
       WhileStmt               = while  Exp Condition                                                                   
       ForStmt                 = for  Exp Condition                                                                      
       IfStmt                  = if Exp Condition                                                                        
-      BreathingStmt           = breathing "🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔"                                                
-      ReturnStmt              = return Exp  
+      BreathingStmt           = breathing "🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔" ";"                                               
+      ReturnStmt              = return Exp ";"
 
       Condition               = "{" Statement* "}"
       
@@ -61,8 +61,6 @@ ChineseBaozi {
      and                      = "且" ~cjk
      breathing                = "呼" ~cjk
      return                   = "返回" ~cjk
-     true                     = "真" ~cjk
-     false                    = "假" ~cjk
      
      
      string                   = "词" ~cjk

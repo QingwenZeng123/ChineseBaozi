@@ -17,17 +17,17 @@ export default function analyze(sourceCode) {
     Program(statement) {
       return new core.Program(statement.eval())
     },
-    VarDec(type, variable, _equal, initializer) {
+    VarDec(type, variable, _equal, initializer, _semicolon) {
       return new core.VariableDeclaration(
         type.eval(),
         variable.eval(),
         initializer.eval()
       )
     },
-    AssignStmt(target, _equal, source) {
+    AssignStmt(target, _equal, source, _semicolon) {
       return new core.AssignmentStatement(target.eval(), source.eval())
     },
-    PrintStmt(_print, _leftPig, argument, _rightPig) {
+    PrintStmt(_print, _leftPig, argument, _rightPig, _semicolon) {
       return new core.PrintStatement(argument.eval())
     },
     WhileStmt(_while, test, body) {
@@ -39,10 +39,10 @@ export default function analyze(sourceCode) {
     IfStmt(_if, test, consequent, alternate) {
       return new core.IfStmt(test.eval(), consequent.eval(), alternate.eval())
     },
-    BreathingStmt(_breathing, _hedgehogs) {
+    BreathingStmt(_breathing, _hedgehogs, _semicolon) {
       return new core.BreathigStatement()
     },
-    ReturnStmt(_return, argument) {
+    ReturnStmt(_return, argument, _semicolon) {
       return new core.ReturnStmt(argument.eval())
     },
     Condition(_leftCurly, statements, _rightCurly) {
