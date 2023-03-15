@@ -1,14 +1,25 @@
 import util from "util"
+import stringify from "graph-stringify"
 
 export class Program {
   constructor(statements) {
     this.statements = statements
+  }
+  [util.inspect.custom]() {
+    return stringify(this)
   }
 }
 
 export class VariableDeclaration {
   constructor(type, variable, initializer) {
     Object.assign(this, { type, variable, initializer })
+  }
+}
+
+export class Variable {
+  constructor(type, name) {
+    this.type = type
+    this.name = name
   }
 }
 
@@ -37,8 +48,8 @@ export class ForStatement {
 }
 
 export class IfStatement {
-  constructor(test, consequent, alternate) {
-    Object.assign(this, { test, consequent, alternate })
+  constructor(test, consequent) {
+    Object.assign(this, { test, consequent })
   }
 }
 
@@ -76,41 +87,44 @@ export class CharacterLiteral {
   }
 }
 
+export class Type {
+  // Type of all basic type boolean, int, float, string, and char
+  static BOOLEAN = new Type("真假")
+  static INT = new Type("整数")
+  static FLOAT = new Type("小数")
+  static STRING = new Type("词")
+  static CHAR = new Type("字")
+  constructor(description) {
+    Object.assign(this, { description })
+  }
+  // Equivalence: when are two types the same
+  isEquivalentTo(target) {
+    return this == target
+  }
+  isAssignableTo(target) {
+    return this.isEquivalentTo(target)
+  }
+}
 export class ArrayType {
   constructor(memberType) {
     this.memberType = memberType
   }
 }
 
-// Return a compact and pretty string representation of the node graph,
-// taking care of cycles. Written here from scratch because the built-in
-// inspect function, while nice, isn't nice enough. Defined properly in
-// the root class prototype so that it automatically runs on console.log.
-Program.prototype[util.inspect.custom] = function () {
-  const tags = new Map()
-
-  // Attach a unique integer tag to every node
-  function tag(node) {
-    if (tags.has(node) || typeof node !== "object" || node === null) return
-    tags.set(node, tags.size + 1)
-    for (const child of Object.values(node)) {
-      Array.isArray(child) ? child.forEach(tag) : tag(child)
-    }
+// Throw an error message that takes advantage of Ohm's messaging
+export function error(message, node) {
+  if (node) {
+    throw new Error(`${node.getLineAndColumnMessage()}${message}`)
   }
-
-  function* lines() {
-    function view(e) {
-      if (tags.has(e)) return `#${tags.get(e)}`
-      if (Array.isArray(e)) return `[${e.map(view)}]`
-      return util.inspect(e)
-    }
-    for (let [node, id] of [...tags.entries()].sort((a, b) => a[1] - b[1])) {
-      let type = node.constructor.name
-      let props = Object.entries(node).map(([k, v]) => `${k}=${view(v)}`)
-      yield `${String(id).padStart(4, " ")} | ${type} ${props.join(" ")}`
-    }
-  }
-
-  tag(this)
-  return [...lines()].join("\n")
+  throw new Error(message)
 }
+
+// Here is the type for string, boolean, char and float value
+if (String.length === 1) {
+  String.prototype.type = Type.CHAR
+} else {
+  String.prototype.type = Type.STRING
+}
+Number.prototype.type = Type.FLOAT
+BigInt.prototype.type = Type.INT
+Boolean.prototype.type = Type.BOOLEAN

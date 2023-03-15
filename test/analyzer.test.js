@@ -32,21 +32,103 @@ const semanticChecks = [
 ]
 
 const semanticErrors = [
-  ["using undeclared identifiers", "打印 🐷一🐷;", /一 has not been declared/],
-  ["declaring variable with wrong type", "小数 一 = 1;", /Expected "整数"/],
+  [
+    "using undeclared identifiers",
+    "打印 🐷一🐷;",
+    /varable hasn't been declared/,
+  ],
+  [
+    "declaring variable with wrong type",
+    "小数 一 = 1;",
+    /(⊙o⊙)？🍔此处需要整数/,
+  ],
   [
     "re-declared identifier",
     "整数 个数 = 1; 字 个数 = 'o';",
     /个数 has already been declared/,
   ],
+  [
+    "different array type element",
+    '词[][] 动物园 = [["dog"],"pig", ["elephant"]];',
+    /type must be consistent in array/,
+  ],
+  [
+    "declaring bad array type",
+    "整数[][] 例子 = [[1, 2], [1], 3];",
+    /Cannot assign a int to a int[]/,
+  ],
+  [
+    "assign bad type",
+    "小数 一 = 1.1 ; 一 = 真;",
+    /Cannot assign a boolean to a float/,
+  ],
+  [
+    "return outside statement",
+    "return;",
+    /Return can only appear in a while, if, or for/,
+  ],
+  ["non-boolean short if test", "如果 1 {}", /(⊙o⊙)？🍔此处需要真假/],
+  ["non-boolean while test", "当 1 {}", /(⊙o⊙)？🍔此处需要真假/],
+  ["bad types for 或", "打印🐷假 或 1🐷;", /(⊙o⊙)？🍔此处需要真假/],
+  ["bad types for 且", "打印🐷假 且 1🐷;", /(⊙o⊙)？🍔此处需要真假/],
+  [
+    "bad types for ==",
+    "打印🐷假 == 1🐷;",
+    /Operands do not have the same type/,
+  ],
+  ["bad types for ≠", "打印🐷假 ≠ 1🐷;", /Operands do not have the same type/],
+  ["bad types for +", "打印🐷假+1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  ["bad types for -", "打印🐷假-1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  ["bad types for *", "打印🐷假*1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  ["bad types for ÷", "打印🐷假÷1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  ["bad types for **", "打印🐷假**1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  ["bad types for <", "打印🐷假<1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  ["bad types for ≤", "打印🐷假≤1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  ["bad types for >", "打印🐷假>1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  ["bad types for ≥", "打印🐷假≥1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  ["bad types for 非", '打印🐷非"hello"🐷;', /(⊙o⊙)？🍔此处需要真假/],
+  [
+    "non-integer index",
+    "整数 例子 = [1, 3, 6, 9];打印🐷例子[false]🐷;",
+    /(⊙o⊙)？🍔此处需要整数/,
+  ],
+  [
+    "array out of range",
+    "整数 例子 = [1, 3, 6, 9];打印🐷例子[6]🐷;",
+    /array out of range/,
+  ],
 ]
 
-const sample = `let x=sqrt(9);function f(x)=3*x;while(true){x=3;print(0?f(x):2);}`
+const sample = `词 猪 = "🐖";
+                词 狗 = "🐕";
+                整数 未知 = 9;
+                当 (未知 > 0) { 
+                  如果(未知 > 5) {
+                    打印🐷狗🐷;
+                    未知 = 未知 - 1;
+                    返回 "🍔";
+                  } 
+                  打印🐷猪🐷;
+                }`
 
-const expected = `   1 | Program statements=[#2,#6,#10]
-   2 | VariableDeclaration variable=#3 initializer=#4
-   3 | Variable name='x' readOnly=false
-   4 | Call callee=#5 args=[9]
+const expected = `   1 | Program statements=[#2,#6,#10,#14]
+   2 | VariableDeclaration type=#3 variable=#4 initializer=#5
+   3 | Variable type=词 
+   4 | Variable name='猪'
+   5 | Variable initializer="🐖" 
+   6 | VariableDeclaration type=#7 variable=#8 initializer=#9
+   7 | Variable type=词 
+   8 | Variable name='狗'
+   9 | Variable initializer="🐕"
+   10| VariableDeclaration type=#11 variable=#12 initializer=#13
+   11| Variable type=整数
+   12| Variable name='未知'
+   13| Variable initializer=9
+   14| WhileStatement test=#15 body=#12
+   15| BinaryExpression op='>' left=3 right=#8
+   12| Variable name='未知'
+   13| Variable initializer=9
+
    5 | Function name='sqrt' paramCount=1 readOnly=true
    6 | FunctionDeclaration fun=#7 params=[#8] body=#9
    7 | Function name='f' paramCount=1 readOnly=true

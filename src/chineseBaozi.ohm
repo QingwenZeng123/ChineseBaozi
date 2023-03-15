@@ -37,7 +37,8 @@ ChineseBaozi {
       Exp7                    = true
                                      | false
                                      | id
-                                     | num
+                                     | floatlit
+                                     | intlit
                                      | stringlit
                                      | charlit
                                      | "(" Exp ")"                                                                            --parens
@@ -73,8 +74,9 @@ ChineseBaozi {
      keyword                  = print | while | for | if | true | false | not | or | and | breathing | string | char | int | float | return | boolean
      id                       = ~keyword cjk+
      cjk                      = "\u{4E00}".."\u{9FFF}"
-     num                      = digit+ ("." digit+)?
      stringlit                = "\"" (~"\"" any)* "\"" 
      charlit                  = "'" (~"'" any) "'"
+     intlit                   = digit+
+     floatlit                 = digit+ "." digit+
      space                    += "🐕" (~"\n" any)*                                                                           --comment
 }
