@@ -21,7 +21,10 @@ const syntaxChecks = [
   ["all logical operators", "结果 = 真 且 假 或 (非 假);"],
   ["the while statement", "当 (结果 > 3) { 结果 = 结果 + 1;}"],
   ["the for statement", "每一个 (数字 ≠ 5 ){返回 6;}"],
-  ["the if statement", "如果 (第一 == 3){返回 6;}"],
+  [
+    "the if statement",
+    "如果 (结果 > 3) {结果 = 结果 + 1;} 不然{结果 = 结果 + 2;}",
+  ],
   ["the breathing statement", "呼 🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔;"],
   ["end of program inside comment", "词 例子 = 2;  🐕this is comment"],
 ]

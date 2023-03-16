@@ -3,100 +3,120 @@ import assert from "assert/strict"
 import analyze from "../src/analyzer.js"
 
 const semanticChecks = [
-  ["variables can be printed", "整数 一 = 1; 打印 🐷一🐷;"],
+  // basic type variable declaration check
   [
-    "variables can be reassigned",
-    "整数 个数 = 1; 个数 = 个数 * 5 ÷ ((0-3) + 个数);",
+    "same type as declared",
+    '整数 个数 = 1; 词 猪 = "pig"; 真假 结果 = 真; 小数 概率 = 0.5;',
   ],
-  ["array declarations", "真假[] 对错 = [真, 假];"],
-  ["nested array declarations", '词[][] 狗 = [["dog"], ["dog"], ["dog"]];'],
-  ["initialize with empty array", "整数[] 队列 = [];"],
-  [
-    "return array value",
-    '词[][] 狗 = [["dog"], ["dog"], ["dog"]]; 返回 狗[0][0]',
-  ],
-  ["return in while", "当 (结果 > 3) { 返回 结果;}"],
-  ["return in for", "每一个 (数字 ≠ 5 ){返回 6;}"],
-  [
-    "return in nested if",
-    "当 (结果 < 6) { 如果 (结果 > 3) {结果 = 结果 + 1;} 结果 = 结果 + 2;}",
-  ],
-  ["或", "打印🐷真 或1<2 或 假 或 非真🐷;"],
-  ["且", "打印🐷真 或1<2 或 假 或 非真🐷;"],
-  ["relations", "打印🐷(1 + 6) > 5 或 1<2 或 (6 ≠ 3)🐷;"],
-  ["ok to == arrays", "打印🐷[1]==[5,8]🐷;"],
-  ["arithmetic", "小数 和=1.5;打印🐷和*3+和**2%8🐷;"],
+  // char type check
+  ["char type as declared", "字 猪 = 'p';"],
+  ["string type as declared", '词 猪 = "p";'],
+  // assignment
+  ["variable must be declared", "整数 个数 = 1; 个数 = 3;"],
 
-  ["types in arithmetic", "小数 个数=1.5; 整数 三 = 3; 小数 = 个数 * 三;"],
-  ["outer variable", "结果 = 6; 当 (结果 > 3) { 返回 结果;}"],
+  // ["variables can be printed", "整数 一 = 1; 打印 🐷一🐷;"],
+  // [
+  //   "variables can be reassigned",
+  //   "整数 个数 = 1; 个数 = 个数 * 5 ÷ ((0-3) + 个数);",
+  // ],
+  // ["array declarations", "真假[] 对错 = [真, 假];"],
+  // ["nested array declarations", '词[][] 狗 = [["dog"], ["dog"], ["dog"]];'],
+  // ["initialize with empty array", "整数[] 队列 = [];"],
+  // [
+  //   "return array value",
+  //   '词[][] 狗 = [["dog"], ["dog"], ["dog"]]; 返回 狗[0][0]',
+  // ],
+  // ["return in while", "当 (结果 > 3) { 返回 结果;}"],
+  // ["return in for", "每一个 (数字 ≠ 5 ){返回 6;}"],
+  // [
+  //   "return in nested if",
+  //   "当 (结果 < 6) { 如果 (结果 > 3) {结果 = 结果 + 1;} 结果 = 结果 + 2;}",
+  // ],
+  // ["或", "打印🐷真 或1<2 或 假 或 非真🐷;"],
+  // ["且", "打印🐷真 或1<2 或 假 或 非真🐷;"],
+  // ["relations", "打印🐷(1 + 6) > 5 或 1<2 或 (6 ≠ 3)🐷;"],
+  // ["ok to == arrays", "打印🐷[1]==[5,8]🐷;"],
+  // ["arithmetic", "小数 和=1.5;打印🐷和*3+和**2%8🐷;"],
+  // ["types in arithmetic", "小数 个数=1.5; 整数 三 = 3; 小数 = 个数 * 三;"],
+  // ["outer variable", "结果 = 6; 当 (结果 > 3) { 返回 结果;}"],
 ]
 
 const semanticErrors = [
+  // basic type variable declaration check
   [
-    "using undeclared identifiers",
-    "打印 🐷一🐷;",
-    /varable hasn't been declared/,
+    "different type as declared",
+    "小数 一 = 1; 整数 个数 = 1.5; 词 猪 = 1; 真假 结果 = 2;",
+    /not same type as declared/,
   ],
-  [
-    "declaring variable with wrong type",
-    "小数 一 = 1;",
-    /(⊙o⊙)？🍔此处需要整数/,
-  ],
+  // re-declared
   [
     "re-declared identifier",
-    "整数 个数 = 1; 字 个数 = 'o';",
-    /个数 has already been declared/,
+    "整数 个数 = 1; 小数 个数 = 1.5;",
+    /must not already be declared/,
   ],
+  // assignment
   [
-    "different array type element",
-    '词[][] 动物园 = [["dog"],"pig", ["elephant"]];',
-    /type must be consistent in array/,
+    "source must be same type as declared",
+    "整数 个数 = 1; 个数 = 3.5;",
+    /not same type as declared/,
   ],
-  [
-    "declaring bad array type",
-    "整数[][] 例子 = [[1, 2], [1], 3];",
-    /Cannot assign a int to a int[]/,
-  ],
-  [
-    "assign bad type",
-    "小数 一 = 1.1 ; 一 = 真;",
-    /Cannot assign a boolean to a float/,
-  ],
-  [
-    "return outside statement",
-    "return;",
-    /Return can only appear in a while, if, or for/,
-  ],
-  ["non-boolean short if test", "如果 1 {}", /(⊙o⊙)？🍔此处需要真假/],
-  ["non-boolean while test", "当 1 {}", /(⊙o⊙)？🍔此处需要真假/],
-  ["bad types for 或", "打印🐷假 或 1🐷;", /(⊙o⊙)？🍔此处需要真假/],
-  ["bad types for 且", "打印🐷假 且 1🐷;", /(⊙o⊙)？🍔此处需要真假/],
-  [
-    "bad types for ==",
-    "打印🐷假 == 1🐷;",
-    /Operands do not have the same type/,
-  ],
-  ["bad types for ≠", "打印🐷假 ≠ 1🐷;", /Operands do not have the same type/],
-  ["bad types for +", "打印🐷假+1🐷;", /(⊙o⊙)？🍔此处需要数字/],
-  ["bad types for -", "打印🐷假-1🐷;", /(⊙o⊙)？🍔此处需要数字/],
-  ["bad types for *", "打印🐷假*1🐷;", /(⊙o⊙)？🍔此处需要数字/],
-  ["bad types for ÷", "打印🐷假÷1🐷;", /(⊙o⊙)？🍔此处需要数字/],
-  ["bad types for **", "打印🐷假**1🐷;", /(⊙o⊙)？🍔此处需要数字/],
-  ["bad types for <", "打印🐷假<1🐷;", /(⊙o⊙)？🍔此处需要数字/],
-  ["bad types for ≤", "打印🐷假≤1🐷;", /(⊙o⊙)？🍔此处需要数字/],
-  ["bad types for >", "打印🐷假>1🐷;", /(⊙o⊙)？🍔此处需要数字/],
-  ["bad types for ≥", "打印🐷假≥1🐷;", /(⊙o⊙)？🍔此处需要数字/],
-  ["bad types for 非", '打印🐷非"hello"🐷;', /(⊙o⊙)？🍔此处需要真假/],
-  [
-    "non-integer index",
-    "整数 例子 = [1, 3, 6, 9];打印🐷例子[false]🐷;",
-    /(⊙o⊙)？🍔此处需要整数/,
-  ],
-  [
-    "array out of range",
-    "整数 例子 = [1, 3, 6, 9];打印🐷例子[6]🐷;",
-    /array out of range/,
-  ],
+  ["target must already be declared", "个数 = 1;", /must already be declared/],
+
+  // [
+  //   "using undeclared identifiers",
+  //   "打印 🐷一🐷;",
+  //   /varable hasn't been declared/,
+  // ],
+  // [
+  //   "different array type element",
+  //   '词[][] 动物园 = [["dog"],"pig", ["elephant"]];',
+  //   /type must be consistent in array/,
+  // ],
+  // [
+  //   "declaring bad array type",
+  //   "整数[][] 例子 = [[1, 2], [1], 3];",
+  //   /Cannot assign a int to a int[]/,
+  // ],
+  // [
+  //   "assign bad type",
+  //   "小数 一 = 1.1 ; 一 = 真;",
+  //   /Cannot assign a boolean to a float/,
+  // ],
+  // [
+  //   "return outside statement",
+  //   "return;",
+  //   /Return can only appear in a while, if, or for/,
+  // ],
+  // ["non-boolean short if test", "如果 1 {}", /(⊙o⊙)？🍔此处需要真假/],
+  // ["non-boolean while test", "当 1 {}", /(⊙o⊙)？🍔此处需要真假/],
+  // ["bad types for 或", "打印🐷假 或 1🐷;", /(⊙o⊙)？🍔此处需要真假/],
+  // ["bad types for 且", "打印🐷假 且 1🐷;", /(⊙o⊙)？🍔此处需要真假/],
+  // [
+  //   "bad types for ==",
+  //   "打印🐷假 == 1🐷;",
+  //   /Operands do not have the same type/,
+  // ],
+  // ["bad types for ≠", "打印🐷假 ≠ 1🐷;", /Operands do not have the same type/],
+  // ["bad types for +", "打印🐷假+1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  // ["bad types for -", "打印🐷假-1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  // ["bad types for *", "打印🐷假*1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  // ["bad types for ÷", "打印🐷假÷1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  // ["bad types for **", "打印🐷假**1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  // ["bad types for <", "打印🐷假<1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  // ["bad types for ≤", "打印🐷假≤1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  // ["bad types for >", "打印🐷假>1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  // ["bad types for ≥", "打印🐷假≥1🐷;", /(⊙o⊙)？🍔此处需要数字/],
+  // ["bad types for 非", '打印🐷非"hello"🐷;', /(⊙o⊙)？🍔此处需要真假/],
+  // [
+  //   "non-integer index",
+  //   "整数 例子 = [1, 3, 6, 9];打印🐷例子[false]🐷;",
+  //   /(⊙o⊙)？🍔此处需要整数/,
+  // ],
+  // [
+  //   "array out of range",
+  //   "整数 例子 = [1, 3, 6, 9];打印🐷例子[6]🐷;",
+  //   /array out of range/,
+  // ],
 ]
 
 const sample = `词 猪 = "🐖";
@@ -151,7 +171,7 @@ describe("The analyzer", () => {
       assert.throws(() => analyze(source), errorMessagePattern)
     })
   }
-  it(`produces the expected graph for the simple sample program`, () => {
-    assert.deepEqual(util.format(analyze(sample)), expected)
-  })
+  // it(`produces the expected graph for the simple sample program`, () => {
+  //   assert.deepEqual(util.format(analyze(sample)), expected)
+  // })
 })

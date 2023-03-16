@@ -12,15 +12,31 @@ function error(message, node) {
 
 const chineseBaoziGrammar = ohm.grammar(fs.readFileSync("src/chineseBaozi.ohm"))
 
-// Save typing
-const INT = core.Type.INT
-const FLOAT = core.Type.FLOAT
-const STRING = core.Type.STRING
-const BOOLEAN = core.Type.BOOLEAN
-const CHAR = core.Type.CHAR
+const HAPPY = "🤗" //return
+const UNHAPPY = "😞" // return good night
+const DELICIOUS = ["🍰", "🍔", "🍟", "🍜", "🍫"] // return I want have it too.
+const BIRTHDAY = "🎂"
 
 function must(condition, message, errorLocation) {
   if (!condition) core.error(message, errorLocation)
+}
+
+function mustBeTheSameTypeAsDeclared(e, t) {
+  console.log(e)
+  console.log(e.type)
+  console.log(t)
+  must(
+    e.type == t || (e.type == "词" && e.length == 1),
+    "not same type as declared"
+  )
+}
+
+function mustNotAlreadyBeDeclared(context, name) {
+  must(!context.sees(name), "must not already be declared")
+}
+
+function mustBeDeclared(context, name) {
+  must(context.sees(name), "must already be declared")
 }
 
 function mustBeANumber(e) {
@@ -55,27 +71,6 @@ function mustBeTheSameType(e1, e2) {
   must(e1.type.isEquivalentTo(e2.type), "Operands do not have the same type")
 }
 
-function mustBeTheSameTypeAsDeclared(e1, e2) {
-  must(e1.type.isEquivalentTo(e2), "not same type as declared")
-}
-
-function mustAllHaveSameType(expressions) {
-  must(
-    expressions
-      .slice(1)
-      .every((e) => e.type.isEquivalentTo(expressions[0].type)),
-    "Not all elements have the same type"
-  )
-}
-
-function variableMustBeDeclared(context, name) {
-  must(!context.sees(name.sourceString), "varable hasn't been declared")
-}
-
-function variableHasExisted(context, name) {
-  must(context.sees(name.sourceString), "not allowed to re-declare")
-}
-
 class Context {
   constructor({ parent = null, locals = new Map() }) {
     Object.assign(this, { parent, locals })
@@ -88,7 +83,7 @@ class Context {
     // No shadowing! Prevent addition if id anywhere in scope chain! This is
     // a Carlos thing. Many other languages allow shadowing, and in these,
     // we would only have to check that name is not in this.locals
-    if (this.sees(name)) core.error(`Identifier ${name} already declared`)
+    mustNotAlreadyBeDeclared(this, name)
     this.locals.set(name, entity)
   }
   lookup(name) {
@@ -106,22 +101,28 @@ class Context {
 }
 
 export default function analyze(sourceCode) {
+  // this is the first context when program buit in
+  let context = new Context({})
+
   const analyzer = chineseBaoziGrammar.createSemantics().addOperation("eval", {
     Program(statement) {
       return new core.Program(statement.eval())
     },
     VarDec(type, variable, _equal, initializer, _semicolon) {
+      console.log(context)
       const e = initializer.eval()
       const t = type.eval()
       mustBeTheSameTypeAsDeclared(e, t)
-      variableHasExisted(context, variable)
-      const v = new core.Variable(variable.sourceString, e.type)
-      context.add(id.sourceString, v)
-      return new core.VariableDeclaration(t, v, e)
+      mustNotAlreadyBeDeclared(context, variable.sourceString)
+      const v = new core.Variable(t, variable.sourceString)
+      context.add(variable.sourceString, v)
+      console.log(context)
+      return new core.VariableDeclaration(v, t, e)
     },
     AssignStmt(target, _equal, source, _semicolon) {
-      mustBeTheSameType(target, source)
-      variableMustBeDeclared(context, target)
+      const e = source.eval()
+      mustBeDeclared(context, target.sourceString)
+      mustBeTheSameTypeAsDeclared(e, context.lookup(target.sourceString).type)
       return new core.AssignmentStatement(target.eval(), source.eval())
     },
     PrintStmt(_print, _leftPig, argument, _rightPig, _semicolon) {
@@ -133,8 +134,8 @@ export default function analyze(sourceCode) {
     ForStmt(_for, test, iteration) {
       return new core.ForStmt(test.eval(), iteration.eval())
     },
-    IfStmt(_if, test, consequent) {
-      return new core.IfStmt(test.eval(), consequent.eval())
+    IfStmt(_if, test, consequent, _else, alternate) {
+      return new core.IfStmt(test.eval(), consequent.eval(), alternate.eval())
     },
     BreathingStmt(_breathing, _hedgehogs, _semicolon) {
       return new core.BreathigStatement()
@@ -190,11 +191,11 @@ export default function analyze(sourceCode) {
     },
 
     stringlit(_open, contents, _close) {
-      return new core.StringLiteral(contents.sourceString)
+      return contents.sourceString
     },
 
     charlit(_open, character, _close) {
-      return new core.CharacterLiteral(character.sourceString)
+      return character.sourceString
     },
 
     true(_) {
@@ -210,11 +211,11 @@ export default function analyze(sourceCode) {
     },
 
     _iter(...children) {
-      return children.map((child) => child.rep())
+      return children.map((child) => child.eval())
     },
   })
 
   const match = chineseBaoziGrammar.match(sourceCode)
   if (!match.succeeded()) error(match.message)
-  console.log("you are good")
+  return analyzer(match).eval()
 }

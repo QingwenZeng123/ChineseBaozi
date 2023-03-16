@@ -1,6 +1,12 @@
 import util from "util"
 import stringify from "graph-stringify"
 
+// Here is the type for string, boolean, char and float value
+String.prototype.type = "词"
+Number.prototype.type = "小数"
+BigInt.prototype.type = "整数"
+Boolean.prototype.type = "真假"
+
 export class Program {
   constructor(statements) {
     this.statements = statements
@@ -48,8 +54,8 @@ export class ForStatement {
 }
 
 export class IfStatement {
-  constructor(test, consequent) {
-    Object.assign(this, { test, consequent })
+  constructor(test, consequent, alternate) {
+    Object.assign(this, { test, consequent, alternate })
   }
 }
 
@@ -75,34 +81,9 @@ export class UnaryExpression {
   }
 }
 
-export class StringLiteral {
-  constructor(contents) {
-    this.contents = contents
-  }
-}
-
-export class CharacterLiteral {
-  constructor(character) {
-    this.character = character
-  }
-}
-
 export class Type {
-  // Type of all basic type boolean, int, float, string, and char
-  static BOOLEAN = new Type("真假")
-  static INT = new Type("整数")
-  static FLOAT = new Type("小数")
-  static STRING = new Type("词")
-  static CHAR = new Type("字")
   constructor(description) {
     Object.assign(this, { description })
-  }
-  // Equivalence: when are two types the same
-  isEquivalentTo(target) {
-    return this == target
-  }
-  isAssignableTo(target) {
-    return this.isEquivalentTo(target)
   }
 }
 export class ArrayType {
@@ -118,13 +99,3 @@ export function error(message, node) {
   }
   throw new Error(message)
 }
-
-// Here is the type for string, boolean, char and float value
-if (String.length === 1) {
-  String.prototype.type = Type.CHAR
-} else {
-  String.prototype.type = Type.STRING
-}
-Number.prototype.type = Type.FLOAT
-BigInt.prototype.type = Type.INT
-Boolean.prototype.type = Type.BOOLEAN

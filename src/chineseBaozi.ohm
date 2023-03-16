@@ -14,7 +14,7 @@ ChineseBaozi {
       PrintStmt               = print  "🐷" Exp  "🐷"  ";"                                                               
       WhileStmt               = while  Exp Condition                                                                   
       ForStmt                 = for  Exp Condition                                                                      
-      IfStmt                  = if Exp Condition                                                                        
+      IfStmt                  = if Exp Condition else Condition                                                                       
       BreathingStmt           = breathing "🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔🦔" ";"                                               
       ReturnStmt              = return Exp ";"
 
@@ -57,6 +57,7 @@ ChineseBaozi {
      true                     = "真"  ~cjk
      false                    = "假"  ~cjk
      if                       = "如果"  ~cjk
+     else                    = "不然" ~cjk
      not                      = "非" ~cjk
      or                       = "或" ~cjk
      and                      = "且" ~cjk
@@ -71,7 +72,7 @@ ChineseBaozi {
      boolean                  = "真假"~cjk
      
      
-     keyword                  = print | while | for | if | true | false | not | or | and | breathing | string | char | int | float | return | boolean
+     keyword                  = print | while | for | if | else | true | false | not | or | and | breathing | string | char | int | float | return | boolean
      id                       = ~keyword cjk+
      cjk                      = "\u{4E00}".."\u{9FFF}"
      stringlit                = "\"" (~"\"" any)* "\"" 
