@@ -86,11 +86,20 @@ export class Type {
     Object.assign(this, { description })
   }
 }
-export class ArrayType {
-  constructor(memberType) {
-    this.memberType = memberType
-  }
-}
+
+export const standardLibrary = Object.freeze({
+  int: Type.INT,
+  float: Type.FLOAT,
+  boolean: Type.BOOLEAN,
+  string: Type.STRING,
+  any: Type.ANY,
+  print: new Function("print"),
+})
+
+String.prototype.type = Type.STRING
+Number.prototype.type = Type.FLOAT
+BigInt.prototype.type = Type.INT
+Boolean.prototype.type = Type.BOOLEAN
 
 // Throw an error message that takes advantage of Ohm's messaging
 export function error(message, node) {

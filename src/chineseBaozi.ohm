@@ -22,17 +22,17 @@ ChineseBaozi {
       
       Exp                     = not Exp7                                                                                    -- unary
                                      | Exp1
-      Exp1                    = Exp1 or Exp2                                                                                 -- binary
+      Exp1                    = Exp1 or Exp2                                                                                 -- or
                                      | Exp2
-      Exp2                    = Exp2 and Exp3                                                                                -- binary
+      Exp2                    = Exp2 and Exp3                                                                                -- and
                                      | Exp3
-      Exp3                    = Exp4 ("≤"|"<"|"=="|"≠"|"≥"|">") Exp4                                                        -- binary
+      Exp3                    = Exp4 ("≤"|"<"|"=="|"≠"|"≥"|">") Exp4                                                        -- compare
                                      | Exp4
-      Exp4                    = Exp4 ("+" | "-") Exp5                                                                        -- binary
+      Exp4                    = Exp4 ("+" | "-") Exp5                                                                        -- add
                                      | Exp5
-      Exp5                    = Exp5 ("*" | "÷" | "%") Exp6                                                                  -- binary
+      Exp5                    = Exp5 ("*" | "÷" | "%") Exp6                                                                  -- multiply
                                      | Exp6
-      Exp6                    = Exp7 "**" Exp6                                                                               -- binary
+      Exp6                    = Exp7 "**" Exp6                                                                               -- power
                                      | Exp7
       Exp7                    = true
                                      | false

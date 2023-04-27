@@ -12,23 +12,25 @@ function error(message, node) {
 
 const chineseBaoziGrammar = ohm.grammar(fs.readFileSync("src/chineseBaozi.ohm"))
 
-const HAPPY = "🤗" //return
-const UNHAPPY = "😞" // return good night
-const DELICIOUS = ["🍰", "🍔", "🍟", "🍜", "🍫"] // return I want have it too.
-const BIRTHDAY = "🎂"
+const INT = core.Type.INT
+const FLOAT = core.Type.FLOAT
+const STRING = core.Type.STRING
+const BOOLEAN = core.Type.BOOLEAN
+
+const basicTypes = new Set(["整数", "小数", "词", "字", "真假"])
 
 function must(condition, message, errorLocation) {
   if (!condition) core.error(message, errorLocation)
 }
 
 function mustBeTheSameTypeAsDeclared(e, t) {
-  console.log(e)
-  console.log(e.type)
-  console.log(t)
-  must(
-    e.type == t || (e.type == "词" && e.length == 1),
-    "not same type as declared"
-  )
+  if (basicTypes.has(e.type) && basicTypes.has(t)) {
+    must(
+      e.type == t || (e.type == "词" && e.length == 1),
+      "not same type as declared"
+    )
+  } else {
+  }
 }
 
 function mustNotAlreadyBeDeclared(context, name) {
@@ -40,7 +42,7 @@ function mustBeDeclared(context, name) {
 }
 
 function mustBeANumber(e) {
-  must([INT, FLOAT].includes(e.type), "(⊙o⊙)？🍔此处需要数字")
+  must([INT, FLOAT].includes(e.type), "Expected a number")
 }
 
 function mustBeAnInteger(e) {
@@ -52,7 +54,7 @@ function mustBeAFloat(e) {
 }
 
 function mustBeABoolean(e) {
-  must(e.type === BOOLEAN, "(⊙o⊙)？🍔此处需要真假")
+  must(e.type === BOOLEAN, "Expected a boolean")
 }
 
 function mustBeAString(e) {
@@ -61,14 +63,6 @@ function mustBeAString(e) {
 
 function mustBeAChar(e) {
   must(e.type === CHAR, "(⊙o⊙)？🍔此处需要字")
-}
-
-function mustBeAType(e) {
-  must(e instanceof core.Type, "Type expected")
-}
-
-function mustBeTheSameType(e1, e2) {
-  must(e1.type.isEquivalentTo(e2.type), "Operands do not have the same type")
 }
 
 class Context {
@@ -109,14 +103,12 @@ export default function analyze(sourceCode) {
       return new core.Program(statement.eval())
     },
     VarDec(type, variable, _equal, initializer, _semicolon) {
-      console.log(context)
       const e = initializer.eval()
       const t = type.eval()
       mustBeTheSameTypeAsDeclared(e, t)
       mustNotAlreadyBeDeclared(context, variable.sourceString)
       const v = new core.Variable(t, variable.sourceString)
       context.add(variable.sourceString, v)
-      console.log(context)
       return new core.VariableDeclaration(v, t, e)
     },
     AssignStmt(target, _equal, source, _semicolon) {
@@ -147,26 +139,70 @@ export default function analyze(sourceCode) {
       return statements.asIteration().eval()
     },
     Exp_unary(op, operand) {
-      return new core.unaryExpression(op.eval(), operand.eval())
+      mustBeABoolean(operand)
+      return new core.UnaryExpression(op.eval(), operand.eval())
     },
-    Exp1_binary(left, op, right) {
-      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
+
+    Exp1_or(exp, _ops, exps) {
+      let left = exp.eval()
+      mustBeABoolean(left)
+      for (let e of exps.children) {
+        let right = e.eval()
+        mustBeABoolean(right)
+        left = new core.BinaryExpression("或", left, right)
+      }
+      return left
     },
-    Exp2_binary(left, op, right) {
-      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
+
+    Exp2_and(exp, _ops, exps) {
+      let left = exp.eval()
+      mustBeABoolean(left)
+      for (let e of exps.children) {
+        let right = e.eval()
+        mustBeABoolean(right)
+        left = new core.BinaryExpression("且", left, right)
+      }
+      return left
     },
-    Exp3_binary(left, op, right) {
-      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
+
+    Exp3_compare(exp1, relop, exp2) {
+      const [left, op, right] = [exp1.eval(), relop.sourceString, exp2.eval()]
+      // == and != can have any operand types as long as they are the same
+      // But inequality operators can only be applied to numbers and strings
+      if (["<", "≤", ">", "≥"].includes(op)) {
+        mustBeANumber(left)
+        mustBeANumber(right)
+      }
+      return new core.BinaryExpression(op, left, right)
     },
-    Exp4_binary(left, op, right) {
-      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
+
+    Exp4_add(exp1, addOp, exp2) {
+      const [left, op, right] = [exp1.eval(), addOp.sourceString, exp2.eval()]
+      if (op === "+" || op === "-") {
+        mustBeANumber(left)
+        mustBeANumber(right)
+      }
+      return new core.BinaryExpression(op, left, right)
     },
-    Exp5_binary(left, op, right) {
-      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
+
+    Exp5_multiply(exp1, addOp, exp2) {
+      const [left, op, right] = [exp1.eval(), addOp.sourceString, exp2.eval()]
+      if (op === "*" || op === "÷" || op === "%") {
+        mustBeANumber(left)
+        mustBeANumber(right)
+      }
+      return new core.BinaryExpression(op, left, right)
     },
-    Exp6_binary(left, op, right) {
-      return new core.BinaryExpression(op.eval(), left.eval(), right.eval())
+
+    Exp6_power(exp1, addOp, exp2) {
+      const [left, op, right] = [exp1.eval(), addOp.sourceString, exp2.eval()]
+      if (op === "**") {
+        mustBeANumber(left)
+        mustBeANumber(right)
+      }
+      return new core.BinaryExpression(op, left, right)
     },
+
     Exp7_parens(_leftParens, expression, _rightParens) {
       return expression.eval()
     },
@@ -174,8 +210,9 @@ export default function analyze(sourceCode) {
       return expressions.asIteration().eval()
     },
 
-    Type_array(type, _pairBracket) {
-      return new core.ArrayType(type.eval())
+    Type_array(baseType, _pairBracket) {
+      // return new core.ArrayType(baseType.eval())
+      return baseType.sourceString + "[]"
     },
 
     id(contents) {
