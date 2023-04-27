@@ -69,7 +69,13 @@ Ordered by precedence from low to high
 | 假           | false     |
 
 ## Built in methods
+| ChineseBaozi | Java               |
+| ------------ | -------------------|
+| 打印🐷🐷;   | System.out.print() |
 
 ## Control Flow
-
-## Comments
+| ChineseBaozi | Java |
+| ------------ | ---- |
+| 每一个        | for |
+| 当           | while|
+| 如果         | if   |
