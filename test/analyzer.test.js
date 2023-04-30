@@ -87,17 +87,6 @@ const expected = `   1 | Program statements=[#2,#6,#10,#14]
    12| Variable name='未知'
    13| Variable initializer=9
 
-   5 | Function name='sqrt' paramCount=1 readOnly=true
-   6 | FunctionDeclaration fun=#7 params=[#8] body=#9
-   7 | Function name='f' paramCount=1 readOnly=true
-   8 | Variable name='x' readOnly=true
-   9 | BinaryExpression op='*' left=3 right=#8
-  10 | WhileStatement test=true body=[#11,#12]
-  11 | Assignment target=#3 source=3
-  12 | PrintStatement argument=#13
-  13 | Conditional test=0 consequent=#14 alternate=2
-  14 | Call callee=#7 args=[#3]`
-
 describe("The analyzer", () => {
   for (const [scenario, source] of semanticChecks) {
     it(`recognizes ${scenario}`, () => {
