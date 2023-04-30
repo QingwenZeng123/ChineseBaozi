@@ -85,7 +85,7 @@ const expected = `   1 | Program statements=[#2,#6,#10,#14]
    14| WhileStatement test=#15 body=#12
    15| BinaryExpression op='>' left=3 right=#8
    12| Variable name='未知'
-   13| Variable initializer=9
+   13| Variable initializer=9`
 
 describe("The analyzer", () => {
   for (const [scenario, source] of semanticChecks) {
